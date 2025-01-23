@@ -16,6 +16,7 @@ Fixed
 - Rename pypika to pypika_tortoise for fixing package name conflict (#1829)
 - Concurrent connection pool initialization (#1825)
 - `_get_dialects`: support properties (#1859)
+- add benchmarks for `get_for_dialect` (#1862)
 
 Changed
 ^^^^^^^
