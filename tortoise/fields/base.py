@@ -1,4 +1,3 @@
-import itertools
 import sys
 import warnings
 from collections.abc import Callable
@@ -297,26 +296,25 @@ class Field(Generic[VALUE], metaclass=_FieldMeta):
 
     def _get_dialects(self) -> dict[str, dict]:
         ret = {}
-        for dialect in [key for key in dir(self) if key.startswith("_db_")]:
+        for dialect in dir(self):
+            if not dialect.startswith("_db_"):
+                continue
             cls = getattr(self, dialect)
+            d = cls.__dict__
             try:
-                cls_instance = cls(self)
-                d = itertools.chain(
-                    # dialect class attributes:
-                    cls.__dict__.items(),
-                    # dialect instance attributes:
-                    cls_instance.__dict__.items(),
-                    # dialect instance properties:
-                    (
-                        (prop, getattr(cls_instance, prop))
-                        for prop in (
-                            func for func in dir(cls) if isinstance(getattr(cls, func), property)
-                        )
-                    ),
-                )
+                obj = cls(self)
             except TypeError:
-                d = cls.__dict__.items()
-            ret[dialect[4:]] = {key: val for key, val in d if not key.startswith("_")}
+                pass
+            else:
+                props = {
+                    prop: getattr(obj, prop)
+                    for prop in dir(cls)
+                    if isinstance(getattr(cls, prop), property)
+                }
+                d = {**d, **props}
+
+            ret[dialect[4:]] = {k: v for k, v in d.items() if not k.startswith("_")}
+
         return ret
 
     def get_db_field_types(self) -> Optional[dict[str, str]]:
