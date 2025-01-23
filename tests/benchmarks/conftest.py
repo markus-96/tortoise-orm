@@ -6,7 +6,7 @@ from decimal import Decimal
 
 import pytest
 
-from tests.testmodels import BenchmarkFewFields, BenchmarkManyFields
+from tests.testmodels import BenchmarkFewFields, BenchmarkManyFields, Tournament, Event, Team, DecimalFields
 from tortoise.contrib.test import _restore_default, truncate_all_models
 
 
@@ -87,3 +87,23 @@ def gen_many_fields_data():
         }
 
     return _gen
+
+
+@pytest.fixture
+def create_team_with_participants() -> None:
+    async def _create():
+        tournament = await Tournament.create(name="New Tournament")
+        event = await Event.create(name="Test", tournament_id=tournament.id)
+        team = await Team.create(name="Some Team")
+        await event.participants.add(team)
+
+    asyncio.get_event_loop().run_until_complete(_create())
+
+
+@pytest.fixture
+def create_decimals() -> None:
+    async def _create():
+        obj0 = await DecimalFields.create(decimal=Decimal("1.23456"), decimal_nodec=18.7)
+        obj = await DecimalFields.filter(decimal=Decimal("1.2346")).first()
+
+    asyncio.get_event_loop().run_until_complete(_create())
