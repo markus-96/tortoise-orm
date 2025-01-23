@@ -91,7 +91,7 @@ def gen_many_fields_data():
 
 @pytest.fixture
 def create_team_with_participants() -> None:
-    async def _create():
+    async def _create() -> None:
         tournament = await Tournament.create(name="New Tournament")
         event = await Event.create(name="Test", tournament_id=tournament.id)
         team = await Team.create(name="Some Team")
@@ -102,8 +102,7 @@ def create_team_with_participants() -> None:
 
 @pytest.fixture
 def create_decimals() -> None:
-    async def _create():
+    async def _create() -> None:
         await DecimalFields.create(decimal=Decimal("1.23456"), decimal_nodec=18.7)
-        await DecimalFields.filter(decimal=Decimal("1.2346")).first()
 
     asyncio.get_event_loop().run_until_complete(_create())
