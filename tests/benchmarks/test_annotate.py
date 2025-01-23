@@ -23,7 +23,7 @@ def test_values_related_m2m(benchmark, create_team_with_participants):
     @benchmark
     def bench():
         async def _bench():
-            tournament2 = await Event.filter(name="Test").values("name", "participants__name")
+            await Event.filter(name="Test").values("name", "participants__name")
 
         loop.run_until_complete(_bench())
 
@@ -34,10 +34,6 @@ def test_filter_decimal(benchmark, create_decimals):
     @benchmark
     def bench():
         async def _bench():
-            (
-                await DecimalFields.annotate(d=F("decimal"))
-                .filter(d=Decimal("1.2346"))
-                .first()
-            )
+            await DecimalFields.annotate(d=F("decimal")).filter(d=Decimal("1.2346")).first()
 
         loop.run_until_complete(_bench())

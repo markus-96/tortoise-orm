@@ -103,7 +103,7 @@ def create_team_with_participants() -> None:
 @pytest.fixture
 def create_decimals() -> None:
     async def _create():
-        obj0 = await DecimalFields.create(decimal=Decimal("1.23456"), decimal_nodec=18.7)
-        obj = await DecimalFields.filter(decimal=Decimal("1.2346")).first()
+        await DecimalFields.create(decimal=Decimal("1.23456"), decimal_nodec=18.7)
+        await DecimalFields.filter(decimal=Decimal("1.2346")).first()
 
     asyncio.get_event_loop().run_until_complete(_create())
