@@ -1,4 +1,5 @@
 import sys
+import traceback
 import warnings
 from collections.abc import Callable
 from enum import Enum
@@ -326,12 +327,17 @@ class Field(Generic[VALUE], metaclass=_FieldMeta):
         """
         if not self.has_db_field:  # pragma: nocoverage
             return None
+        default = getattr(self, "SQL_TYPE")
         return {
             "": getattr(self, "SQL_TYPE"),
             **{
-                dialect: _db["SQL_TYPE"]
-                for dialect, _db in self._get_dialects().items()
-                if "SQL_TYPE" in _db
+                dialect: sql_type
+                for dialect, sql_type in (
+                    (key[4:], self.get_for_dialect(key[4:], "SQL_TYPE"))
+                    for key in dir(self)
+                    if key.startswith("_db_")
+                )
+                if sql_type != default
             },
         }
 
@@ -342,8 +348,16 @@ class Field(Generic[VALUE], metaclass=_FieldMeta):
         :param dialect: The requested SQL Dialect.
         :param key: The attribute/method name.
         """
-        dialect_data = self._get_dialects().get(dialect, {})
-        return dialect_data.get(key, getattr(self, key, None))
+        cls = getattr(self, f"_db_{dialect}", None)
+        value = getattr(cls, key, None)
+        if value is None:
+            v = getattr(self, key, None)
+            if isinstance(v, property):
+                return getattr(self, key)
+            return v
+        elif isinstance(value, property):
+            return getattr(cls(self), key)
+        return value
 
     def describe(self, serializable: bool) -> dict:
         """
