@@ -311,7 +311,7 @@ class Field(Generic[VALUE], metaclass=_FieldMeta):
                     for prop in dir(cls)
                     if isinstance(getattr(cls, prop), property)
                 }
-                d = {**d, **props}
+                d = {**d, **obj.__dict__, **props}
 
             ret[dialect[4:]] = {k: v for k, v in d.items() if not k.startswith("_")}
 
