@@ -6,6 +6,18 @@ Changelog
 
 .. rst-class:: emphasize-children
 
+0.25
+====
+
+0.25.0 (unreleased)
+------
+Fixed
+^^^^^
+
+Changed
+^^^^^^^
+- add benchmarks for `get_for_dialect` (#1862)
+
 0.24
 ====
 
@@ -16,7 +28,6 @@ Fixed
 - Rename pypika to pypika_tortoise for fixing package name conflict (#1829)
 - Concurrent connection pool initialization (#1825)
 - `_get_dialects`: support properties (#1859)
-- add benchmarks for `get_for_dialect` (#1862)
 
 Changed
 ^^^^^^^
