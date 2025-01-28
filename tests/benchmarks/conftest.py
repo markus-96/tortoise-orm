@@ -6,7 +6,14 @@ from decimal import Decimal
 
 import pytest
 
-from tests.testmodels import BenchmarkFewFields, BenchmarkManyFields, Tournament, Event, Team, DecimalFields
+from tests.testmodels import (
+    BenchmarkFewFields,
+    BenchmarkManyFields,
+    Tournament,
+    Event,
+    Team,
+    DecimalFields,
+)
 from tortoise.contrib.test import _restore_default, truncate_all_models
 
 
