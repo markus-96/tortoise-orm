@@ -329,7 +329,7 @@ class Field(Generic[VALUE], metaclass=_FieldMeta):
             return None
         default = getattr(self, "SQL_TYPE")
         return {
-            "": getattr(self, "SQL_TYPE"),
+            "": default,
             **{
                 dialect: sql_type
                 for dialect, sql_type in (
@@ -348,16 +348,16 @@ class Field(Generic[VALUE], metaclass=_FieldMeta):
         :param dialect: The requested SQL Dialect.
         :param key: The attribute/method name.
         """
-        cls = getattr(self, f"_db_{dialect}", None)
-        value = getattr(cls, key, None)
-        if value is None:
+        dialect_cls = getattr(self, f"_db_{dialect}", None)
+        dialect_value = getattr(dialect_cls, key, None)
+        if dialect_value is None:
             v = getattr(self, key, None)
             if isinstance(v, property):
                 return getattr(self, key)
             return v
-        elif isinstance(value, property) and isinstance(cls, type):
-            return getattr(cls(self), key)
-        return value
+        elif isinstance(dialect_value, property) and isinstance(dialect_cls, type):
+            return getattr(dialect_cls(self), key)
+        return dialect_value
 
     def describe(self, serializable: bool) -> dict:
         """
