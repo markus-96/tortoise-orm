@@ -355,7 +355,7 @@ class Field(Generic[VALUE], metaclass=_FieldMeta):
             if isinstance(v, property):
                 return getattr(self, key)
             return v
-        elif isinstance(value, property):
+        elif isinstance(value, property) and isinstance(cls, type):
             return getattr(cls(self), key)
         return value
 
